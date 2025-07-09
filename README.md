@@ -37,9 +37,9 @@
 ##1-4.React + TypeScript開発環境構築(vite)
   -Node.jsを使用する(v18以上)
   -ターミナルを開いて以下を実行
-    npm create vite@latest react-tsx-app(実際のプロジェクト名) -- --template react-ts
+    npm create vite@latest
   -ディレクトリに移動
-    cd react-tsx-app
+    react-tsx-app
   -必要なパッケージをインストール
     npm install
   -開発サーバーを起動
@@ -66,14 +66,44 @@
   -Reactでは関数を使ってUIの部品を作る
    これを「関数型コンポーネント」という
   -基本構文
-    function MyConpornent(){
+    function Header(){
       return <h1>hello world</h1>;
     };
     export default;
     これを使う側では
     <MyConpornent/>
   -TSXでの記述になると
-    const MyConpornent = (): JSX.Element => {
+    const Header = () => {
       return <h1>hello world</h1>;
     };
-  -(): JSX.Elementは「JSXを返す関数」の型注釈
+  -App.tsxでは
+    import Header from './compornents/Header';
+    function App(){
+      return (
+        <div>
+          <Header />
+          <p>こんちわ！</p>
+        </div>
+      );
+    }
+  -仕組み
+   Headerというコンポーネントでは<h1>タグでHello Worldと表示
+   それをApp.tsxに読み込んで、return()の()に<Header />として配置する
+   そしたら、表示される。これは他のページでも使える→これが再利用！
+
+##2-3-1.Propsとは？
+  -親から子へ渡す情報のことで「データを下のコンポーネントに渡す道具」
+  -JSXでの基本例
+    -Header.jsx側
+      function Header(props) {
+        return <h1>{props.title}</h1>
+      }
+      export default Header;
+    -App.jsx側
+      function App() {
+        return <Header title="こんちわ！" />
+      }
+  -流れ
+   AppがHeaderにtitleというpropsを渡している
+   Headerが
+   
