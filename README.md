@@ -163,6 +163,7 @@
     const Header = ({title}: Props){
       return <h1>{title}</h1>
     }
+
   -拡張(extends)
     -利点
       共通の表示ロジックを共通型に集約
@@ -186,6 +187,7 @@
       productName: string
       price: number
     }
+
   -合成(&)
     -利点
       ロジック(機能)とデザイン(論理)を別で定義して合成できる
@@ -200,10 +202,40 @@
         size: 'small' | 'large'
       }
       type ButtonProps = ActionProps & StyleProps
+
   -分岐(|union型)
     -利点
       -statusに応じてpropsの構造が変わるのに対応できる
       -statusの条件分岐で型が自動的に絞り込まれる
+    (UserStatus.tsx)
+      type LoadingState = {status: 'loading'}; //status = ローディング
+      type ErrorState = {status: 'error',message: string}; //status = エラー
+      type SuccessState = {status: 'success',user: { name: string; age: number }; //status = 成功
+      type UserProfileProps = LoadingState | ErrorState | SuccessState;
+      //条件分岐
+      const UserProfile = (props:UserProfileProps) => {
+        if (props.status === 'loading') return <p>読み込み中</p>
+        if (props.status === 'error') return <p>エラー</p>
+        return <p>ユーザー: {props.user.name}</p>
+      }
+    (App.tsx)
+      import UserProfile from './UserStatus'
+      function App() {
+        const loading = false
+        const error = false
+        const props = loading
+          ? {status: 'loading'}: error
+          ? {status: 'error', message: 'エラー'} : {status: success, user: {name: '直人', age: 26}}
+        return <UserProfile {...props}/>
+      }
+
+##2-3-5.Propsの分割代入と型注釈
+-分割代入とは
+  const MyCompornent = ({ title }: props) => { とすることで、returnの中のhtmlタグの中身で{title}とすぐ使える
+  分割代入していないと...
+  const MyCompornent = (props: Props) => { 
+    return <h1>{props.title}</h1>
+  のようになり毎回「props.」と付けなくてはならなくて、面倒臭い(
     
 
 
