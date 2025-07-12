@@ -379,8 +379,8 @@
             -1行でかけるのでスッキリ
             -ネストすると可読性が悪くなる
     -条件が1つだけでtrue or falseのみの場合
-    (App.tsx)
-    {isAdmin && <p>管理者</p>}
+        (App.tsx)
+        {isAdmin && <p>管理者</p>}
         -trueなら表示、falseなら非表示と条件が一分岐しかない時はこれがいい
     -使い分け
         単純 : 三項演算子
@@ -389,10 +389,16 @@
     -サンプルコード(ユーザーロールに応じた表示切替)
     (RoleBadge.tsx)
     type Props = {
-        role: 'admin' | 'user' | 'guest'
+        role: 'admin' | 'user' | 'guest' //typeはunionで分岐
     }
     const RoleBadge = ({ role }: Props) => {
-        if (role === 'admin') return <p></p>
+        if (role === 'admin') return <p>管理者</p>
+        if (role === 'user') return <p>一般ユーザー</p>
+        return <p>ゲスト</p>
+    }
+    (App.tsx)
+    <RoleBadge role="admin" />
+
 
 
 
