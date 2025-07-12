@@ -80,10 +80,10 @@
         import Header from './compornents/Header';
         function App(){
             return (
-                <div>
+                <>
                     <Header />
                     <p>こんちわ！</p>
-                </div>
+                </>
             );
         }
     -仕組み
@@ -267,7 +267,7 @@
             const [user, setUser] = useState<user | null>(null)
             //初期値がnullだと、型がnullとして推論されるため明示が必要
     -オブジェクトの型を扱う時の注意点
-        //User.tsx
+    (User.tsx)
         type User = {
             name: string
             age: number
@@ -292,6 +292,7 @@
         useEffect(() => {
             setOnSend(() => sendMessage)
         },[])  
+    -使用例2
     (ConfirmModal.tsx)
         type ConfirmModalProps = {
             onConfirm: () => void;
@@ -305,7 +306,7 @@
             openModal(); // モーダルを開く
         };
         <ConfirmModal onConfirm={() => confirmAction?.()} />
-     //省略記法でないver
+         //省略記法でないver
         const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null)
         const handleDelete = (id: number) => {
             const action = () => {
@@ -319,15 +320,72 @@
         () => () => {...} は関数を返す高階関数である
         即時実行したくないときは、ネスト構造にすることでエラーを防ぐ
 
-
-
-
-
-
-
-
-
-
+##2-5.イベントの型定義
+    -イベントとは？
+        ユーザーのアクションにより発火する処理(クリック,入力など)
+        (例文)
+        <button onClick={handleClick}>送信</button>
+        <input onChange={handleInput} />
+    -イベント型一覧
+        onClick : React.MouseEvent<HTMLButtonElement> : ボタンなど
+        onChange : React.ChangeEvent<HTMLInputElement> : テキスト入力欄
+        onSubmit : React.FormEvent<HTMLFormElement> : フォーム送信
+        onKeyDown : React.KeyboardEvent<HTMLInputElement> : キーボード操作
+        onFocus : React.FocusEvent<HTMLInputElement> : フォーカス取得
+        onBlur : React.FocusEvent<HTMLInputElement> : フォーカス喪失
+    -ボタン使用例( Button.tsx , Form.tsx , etc... )
+        const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault() //デフォルト動作防止用
+            alert("クリックされました")
+        }
+    -入力欄使用例
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement> => {
+            const value = e.target.value
+            console.log(value)
+        }
+    -フォーム使用例
+        const handleSubmit = (e: React.FormEvent<HTMLInputElement> => {
+            e.preventDefault(
+        )
+    -TSX内での構成の考え方
+        -e: React.MouseEvent<HTMLButtonElement> => void は
+         Button.tsxのtype指定のところで、onClickという型の定義で書く
+         外部にイベントをエクスポートするのであれば、そのイベントの型はButton.tsxで絶対に指定する
+        -App.tsx側では書くのか？
+            より安全にするのであれば、handleClick関数を作る時に(引数)のeに:型をつけたほうが安全
+        -コード
+            <Button text="..." onClick={handleClick} />
+##2-6.条件分岐レンダリング
+    -条件分岐の方法はif文か三項演算子(... ? 〜〜〜 : ¥¥¥)
+    -if文
+    (App.tsx)
+        let content
+        if (isLoggedIn) {
+            content = <p>ログイン済み</p>
+        } else {
+            content = <p>ゲスト</p>
+        }
+        return <div>{content}</div>
+        -ポイント
+            -複雑な処理の時に分かりやすく推奨される
+    -三項演算子
+    (App.tsx)
+    return (
+        <>
+            {isLoggedIn ? <p>ログイン済み</p> : <p>ゲスト</p>
+        </>
+    )
+        -ポイント
+            -1行でかけるのでスッキリ
+            -ネストすると可読性が悪くなる
+    -条件が1つだけでtrue or falseのみの場合
+    (App.tsx)
+    {isAdmin && <p>管理者</p>}
+        -trueなら表示、falseなら非表示と条件が一分岐しかない時はこれがいい
+    -使い分け
+        単純 : 三項演算子
+        中程度 : if文
+        複雑 : swichや関数で分岐処理を定義
 
 
 
