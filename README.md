@@ -408,51 +408,51 @@
                 <#li key={index}>{fruits}</li> //keyはindexとなってる
             ))}
         )
--keyは再レンダリング時の変化を明確にするために必要
--keyがないと再描画・再利用のバグが起こる可能性あり
-
--keyの型の付け方
-index : 配列の順番で使う : 並び替えや削除があるとバグに繋がる
-idなどのユニーク値 : DBのIDなどを使う : 推奨,安定性高い
-nameなどstring : 重複がないならOK : ユニークではないためkeyに不向き
-
--推奨コード
-const user = [
-{id: 1, name:"直人"}
-{id: 2, name:"眞子"}
-]
-return (
-{users.map((user) => (
-<#li key={user.id}>{user.name}</li>
-)
--型定義付きの推奨コード
-(User.tsx)
-type User = {
-id: number,
-name: string
-｝
-type Props = {
-users: user[]
-const user = ({ users }: Props) => {
-return (
- <#ul>
-{users.map((user) => (
-    <#li key={user.id}>{user.name}</li>
-))}
-</ul>
-(App.tsx)
-function App() {
-const data = [
-{id: 26,name: "直人"}
-{id: 27,name: "眞子"}
-]
-return(
-<#div>
-<h2></h2>
-<UserList users={data}
-</div>
-)
-}
+    -keyは再レンダリング時の変化を明確にするために必要
+    -keyがないと再描画・再利用のバグが起こる可能性あり
+    -keyの型の付け方
+        index : 配列の順番で使う : 並び替えや削除があるとバグに繋がる
+        idなどのユニーク値 : DBのIDなどを使う : 推奨,安定性高い
+        nameなどstring : 重複がないならOK : ユニークではないためkeyに不向き
+    -推奨コード
+        const user = [
+            {id: 1, name:"直人"}
+            {id: 2, name:"眞子"}
+        ]
+        return (
+            {users.map((user) => (
+            <#li key={user.id}>{user.name}</li>
+        )
+    -型定義付きの推奨コード
+    (User.tsx)
+        type User = {
+            id: number,
+            name: string
+        ｝
+        type Props = {
+            users: user[]
+        }
+        const user = ({ users }: Props) => {
+        return (
+            <#ul>
+            {users.map((user) => (
+                <#li key={user.id}>{user.name}</li>
+            ))}
+            <#/ul>
+        }
+    (App.tsx)
+    function App() {
+        const data = [
+            {id: 26,name: "直人"}
+            {id: 27,name: "眞子"}
+        ]
+    return(
+    <#div>
+        <h2></h2>
+        <UserList users={data}
+    <#/div>
+    )
+    }
  
   
 
