@@ -370,16 +370,16 @@
             -複雑な処理の時に分かりやすく推奨される
     -三項演算子
     (App.tsx)
-    return (
-        <>
-            {isLoggedIn ? <p>ログイン済み</p> : <p>ゲスト</p>
-        </>
-    )
+        return (
+            <>
+                {isLoggedIn ? <p>ログイン済み</p> : <p>ゲスト</p>
+            </>
+        )
         -ポイント
             -1行でかけるのでスッキリ
             -ネストすると可読性が悪くなる
     -条件が1つだけでtrue or falseのみの場合
-        (App.tsx)
+    (App.tsx)
         {isAdmin && <p>管理者</p>}
         -trueなら表示、falseなら非表示と条件が一分岐しかない時はこれがいい
     -使い分け
@@ -388,16 +388,25 @@
         複雑 : swichや関数で分岐処理を定義
     -サンプルコード(ユーザーロールに応じた表示切替)
     (RoleBadge.tsx)
-    type Props = {
-        role: 'admin' | 'user' | 'guest' //typeはunionで分岐
-    }
-    const RoleBadge = ({ role }: Props) => {
-        if (role === 'admin') return <p>管理者</p>
-        if (role === 'user') return <p>一般ユーザー</p>
-        return <p>ゲスト</p>
-    }
+        type Props = {
+            role: 'admin' | 'user' | 'guest' //typeはunionで分岐
+        }
+        const RoleBadge = ({ role }: Props) => {
+            if (role === 'admin') return <p>管理者</p>
+            if (role === 'user') return <p>一般ユーザー</p>
+            return <p>ゲスト</p>
+        }
     (App.tsx)
-    <RoleBadge role="admin" />
+        <RoleBadge role="admin" /> //便宜上adminを入れてる
+
+##2-7.リストレンダリングとkey
+    -配列を使った複数JSXの描画
+    -基本コード
+const fruits = ['apple','orange','grape']
+return (
+<ul>
+    {fruits.map((fruits, index) => )
+)
 
 
 
