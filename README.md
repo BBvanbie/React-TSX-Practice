@@ -389,6 +389,10 @@
     -サンプルコード(ユーザーロールに応じた表示切替)
     (RoleBadge.tsx)
     type Props = {
+        role: 'admin' | 'user' | 'guest'
+    }
+    const RoleBadge = ({ role }: Props) => {
+        if (role === 'admin') return <p></p>
 
 
 
