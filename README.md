@@ -81,8 +81,8 @@
         function App(){
             return (
                 <>
-                    <Header />
-                    <p>こんちわ！</p>
+                    <#Header />
+                    <#p>こんちわ！</p>
                 </>
             );
         }
@@ -425,34 +425,35 @@
         )
     -型定義付きの推奨コード
     (User.tsx)
-        type User = {
+        type User = { //各ユーザーの型(オブジェクト構造)を定義
             id: number,
             name: string
         ｝
-        type Props = {
+        type Props = { //User.tsxに渡すPropsの型定義(User型の配列)
             users: user[]
         }
-        const user = ({ users }: Props) => {
+        const user = ({ users }: Props) => { //分割代入によるprops受け取りの型定義
         return (
             <#ul>
-            {users.map((user) => (
+            {users.map((user) => ( //受け取った配列を.mapでループし<li>を出力
                 <#li key={user.id}>{user.name}</li>
             ))}
             <#/ul>
         }
     (App.tsx)
     function App() {
-        const data = [
+        const data = [ //user型の配列
             {id: 26,name: "直人"}
             {id: 27,name: "眞子"}
         ]
-    return(
-    <#div>
-        <h2></h2>
-        <UserList users={data}
-    <#/div>
-    )
+        return(
+            <#div>
+                <h2>ユーザ一覧</h2>
+                <User users={data} />
+            <#/div>
+        )
     }
+    (
  
   
 
