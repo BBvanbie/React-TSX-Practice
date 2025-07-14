@@ -605,6 +605,53 @@
                 -onClick={() => onToggle(item.id)}はクリックされた要素のidを親に渡す
                 -style={...}で要素の状態にの見た目を変えている
 
+##3-1-1.useStateとは？
+    -Reactの関数コンポーネント内での「状態」を定義・操作するためのHook
+    -動的なUI変化を伴うページには必須
+    -なぜ「状態」が必要なのか    
+        -Reactアプリの画面上の見た目は全て「状態」に依存しているから
+        -カウント=5 : 5と表示
+        -入力値が"田中" : フォームに田中と表示
+        -ログイン済み : マイページへのボタンなど
+    -useStateの役割とは？
+        -宣言 : 状態の名前と初期値を定義する
+        -更新 : 状態を更新するための関数を取得する
+        -再レンダリング : 状態が変わったら、自動で画面が再描写される
+    -useStateの構造
+        const [state, setState] = useState(初期値);
+        -state : 現在の状態の値
+        -setState : 状態を更新する関数
+        -初期値 : 最初の状態の値
+    -状態変更ができない理由
+        let [count, setCount] = useState(0);
+        count = 5;
+        -このコードだと再レンダリングが走らないから更新されない
+        setCount(5);
+        -これだとコードが再レンダリング可能で、画面反映がされる
+    -例コード(カウンター)
+        function Counter(){
+            const [count, setCount] = useState(0);
+            return(
+                <>
+                    <p>現在のカウント:{count}</p>
+                    <button onClick={() => setCount(count + 1)}> +1 </button>
+                </>
+            )
+        };
+    -状態と再レンダリングの関係
+        ボタンクリック
+            ↓
+        setState関数で状態更新
+            ↓
+        Reactが差分を検出
+            ↓
+        該当コンポーネントを再描画
+            ↓
+        画面が最新の状態に更新される
+    -実務での使用例
+        入力フォームの入力内容 : const [name, setName] = useState("");
+        チェックボックスのON/OFF : const [isChecked, setIsChecked] = useState(false);
+        ひょうｊ
 
 
 
