@@ -239,6 +239,9 @@
     -型注釈について
         ({ title }: ...)の分割代入した後に「:」でその型を決める
         これにより、typeで指定した型をTypeScriptが読み取る
+        つまり、先に...のtype指定もしていないとだめ
+        type Props = { items: TodoItem[] , onToggle: (id: number) => void }などの「Props」を
+        ...の箇所に書いて、型注釈を定義する
     -使い分け
         propsが多いとき(Form全体など) : 通常の props.title
         propsが少ないとき(buttonやcardなど) : 分割代入が推奨
@@ -257,7 +260,7 @@
         数値 : useState<number>(0) : カウンターなど
         文字列 : useState<string>("") : 入力フォームなど
         真偽値 : useState<boolean>(true/false) : チェック状態など
-        配列 : useState<string[]>([]) : リスト表示
+        配列 : useState<string[]>(["実際のリスト"]) : リスト表示
         オブジェクト : useState<user | null>(null) : ユーザー情報など
         関数 : useState<(() => void) | null>(null) : イベントハンドラーなど
     -型推論との使い分け
@@ -453,11 +456,154 @@
             <#/div>
         )
     }
-    (
- 
-  
+    -まとめ
+        -.mapを使い配列の要素をJSXとして描画できる
+        -各要素にkeyを絶対につける
+        -リストの定義はtype Props = { users: user[] }のように配列で定義
 
-
+##Todoリスト作成
+    -目的
+        -typescriptの型定義について
+            Type TodoItemやtype Propsによる厳格なデータ構造の定義
+        -propsの受け渡し
+            App → TodoListにデータ(配列)と関数(onToggle)を渡す設定
+        -関数をpropsとして渡す
+            onClick={() => onToggle(item:id)}で関数を動的に呼び出す仕組み
+        -useStateの利用
+            useState<TodoItem[]>で状態を型付きで管理。配列の更新もmapで処理
+        -コンポーネントの再利用
+            TodoListはpropsで動作が変わる汎用性の高い部品になっている
+        -クリックでの状態変更
+            completedを!completedに反転 → UIに反映
+    -実際のコード
+----(App.tsx)--------------------------------------
+        import { useState } from "react";
+        import TodoList from "./components/TodoList";
+        import "./App.css";
+    // 型定義 //
+        type TodoItem = {
+            id: number;
+            title: string;
+            completed: boolean;
+        };
+    // 初期情報とToggleイベント //
+        function App() {
+            const [todos, setTodos] = useState<TodoItem[]>([
+                { id: 1, title: "洗濯", completed: false },
+                { id: 2, title: "Reactの勉強", completed: false },
+                { id: 3, title: "ゴミ出し", completed: false },
+            ]);
+            const toggleTodo = (id: number) => {
+                setTodos((prevTodos) =>
+                    prevTodos.map((todo) =>
+                        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+                    )
+                );
+            };
+    // 実際に表示させるUI部分 //
+            return (
+                <div>
+                    <h2>Todoリスト</h2>
+                    <TodoList items={todos} onToggle={toggleTodo} />
+                </div>
+            );
+        }
+        export default App;
+----解説-------------------------------------------
+        -Todoの状態をuseStateで管理し、その状態をTodoListコンポーネントに渡して表示、クリックで状態を切り替えるという処理
+            1.TodoItem型の定義    
+                type TodoItem = {
+                    id: number;
+                    title: string;
+                    completed: boolean;
+                }
+            2.useStateでtodosを定義
+                const [todos, setTodos] =useState<TodoItem[]>([
+                    {id: 1,title: "洗濯",completed: false},
+                    {id: 2,title: "勉強",completed: false},
+                    {id: 3,title: "ゴミ出し",completed: false}
+                ])
+                -初期状態はTodoItemの配列で、useState<TodoItem[]>で配列の型定義
+                -setTododsで状態を更新して、todosがUIの表示に使われる
+            3.toggleTodo関数
+                const toggleTodo = (id: number) => {
+                    setTodos((prevTodos) =>
+                        prevTodos.map((todo) =>
+                            todo.id === id ? {...todo, completed: !todo.completed } : todo
+                        )
+                    )
+                }
+                -関数定義後の = () => { の ()内引数にid:numberを指定して型を意識
+                -prevTodosは何かの処理の直前までの状態を示しており、これを参照することで今の状態を把握
+                -...todoのスプレッド構文で非破壊更新をしつつ、completedを反転
+                -setTodos((prevTodos) => { で新しい配列に更新して再描画させている
+----(TodoList.tsx)---------------------------------
+    // TodoItemの型定義 //
+        type TodoItem = {
+            id: number;
+            title: string;
+            completed: boolean;
+        };
+    // Propsの型定義 //
+        type Props = {
+            items: TodoItem[];
+            onToggle: (id: number) => void;
+        };
+        const TodoList = ({items,onToggle}:Props)=>{
+    // mapを使ってitems内の各要素であるitemを取り出し、liに表示 //
+            return(
+                <ul>
+                    {items.map((item)=>(
+                        <li
+                            key={item.id}
+                            onClick={() => onToggle(item.id)}
+                            style={{cursor:"pointer",textDecoration: item.completed ? 'line-through' : 'none'}}>
+                            {item.title}
+                        </li>
+                    ))}
+                </ul>
+            )
+        }
+        export default TodoList;
+----解説-------------------------------------------
+        -親コンポーネントから受け取ったTodoリストの配列と、クリック時の切り替え関数で、liに展開し、クリックでの状態管理
+            1.TodoItem型の定義
+                type TodoItem = {
+                    id: number,
+                    title: string,
+                    completed: boolean
+                };
+                -親と同じ定義をここでも定義(定義用コンポーネントで共通化もOK)
+            2.Props型の定義
+                type Props = {
+                    items: TodoItem[];
+                    onToggle: (id:number) => void;
+                };
+                -itemsはTodoListの配列
+                -onToggleはクリックさせたTodoのidを受け取って親側で状態を反転させる関数
+            3.コンポーネントの定義と分割代入
+                const TodoList = ({ items, onToggle ): Props) => {
+                -Propsを直接分割代入で受け取ることでコードが簡略化できる
+                -Propsという型注釈を作るために上で型を定義した
+            4.JSXの返却(ulとmapによる展開)
+                return (
+                    <ul>
+                        {items.map((item) => (
+                            <li
+                                key={item.id}
+                                onClick={() => onToggle(item.id)}
+                                style={{
+                                    cursor: "pointer",
+                                    textDecoration: item.completed ? "line-through" : "none",
+                                }}
+                            >{item.title}</li>
+                        ))}
+                    </ul>
+                );
+                -mapは配列ループ用
+                -key={item.id}は各要素を一意に識別。
+                -onClick={() => onToggle(item.id)}はクリックされた要素のidを親に渡す
+                -style={...}で要素の状態にの見た目を変えている
 
 
 
