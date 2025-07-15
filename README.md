@@ -118,13 +118,13 @@
 ##2-3-2.propsを受け取る構文(型なし)
     -JSX(型なし)での受け取り例
     -Header.jsx
-    function Header(props){
-    return <h1>{props.title}</h1>;
-    }
+        function Header(props){
+            return <h1>{props.title}</h1>;
+        }
     -App.jsx
-    function App(){
-    return <Header title="Hello World" />
-    ;
+        function App(){
+            return <Header title="Hello World" />
+        ;
     -Header.jsxで作ったh1タグの中身を、App.jsx(親コンポーネント)側でtitle="Hello World"と指定
     -{props.title}でもいいが、分割代入も覚えた方がいい
     -分割代入が推奨(後述)
@@ -152,7 +152,7 @@
     -継承,拡張性に優れてる(特に大規模プロジェクトなどで使われる)
     -保守・再利用・変更が関わってくるのであれば、使うべき
     -typeの書き方
-        type Header Props = {
+        type HeaderProps = {
             title: string
         }
      -interfaceの書き方
@@ -502,10 +502,10 @@
             };
     // 実際に表示させるUI部分 //
             return (
-                <div>
+                <#div>
                     <h2>Todoリスト</h2>
                     <TodoList items={todos} onToggle={toggleTodo} />
-                </div>
+                </#div>
             );
         }
         export default App;
@@ -552,16 +552,16 @@
         const TodoList = ({items,onToggle}:Props)=>{
     // mapを使ってitems内の各要素であるitemを取り出し、liに表示 //
             return(
-                <ul>
+                <#ul>
                     {items.map((item)=>(
-                        <li
+                        <#li
                             key={item.id}
                             onClick={() => onToggle(item.id)}
                             style={{cursor:"pointer",textDecoration: item.completed ? 'line-through' : 'none'}}>
                             {item.title}
-                        </li>
+                        </#li>
                     ))}
-                </ul>
+                </#ul>
             )
         }
         export default TodoList;
@@ -587,18 +587,18 @@
                 -Propsという型注釈を作るために上で型を定義した
             4.JSXの返却(ulとmapによる展開)
                 return (
-                    <ul>
+                    <#ul>
                         {items.map((item) => (
-                            <li
+                            <#li
                                 key={item.id}
                                 onClick={() => onToggle(item.id)}
                                 style={{
                                     cursor: "pointer",
                                     textDecoration: item.completed ? "line-through" : "none",
                                 }}
-                            >{item.title}</li>
+                            #>{item.title}</li>
                         ))}
-                    </ul>
+                    <#/ul>
                 );
                 -mapは配列ループ用
                 -key={item.id}は各要素を一意に識別。
@@ -633,7 +633,7 @@
             const [count, setCount] = useState(0);
             return(
                 <>
-                    <p>現在のカウント:{count}</p>
+                    <#p>現在のカウント:{count}</p>
                     <button onClick={() => setCount(count + 1)}> +1 </button>
                 </>
             )
@@ -651,7 +651,62 @@
     -実務での使用例
         入力フォームの入力内容 : const [name, setName] = useState("");
         チェックボックスのON/OFF : const [isChecked, setIsChecked] = useState(false);
-        ひょうｊ
+        商品一覧データ(配列) : const [item, setItem] = useState<Product[]>([]);
+
+##3-1-2.useStateの基本構文
+    -setStateとprev
+        setState(prev => 新しい値);
+        -前回の状態を基に新しい状態を決めるための関数型の書き方
+        -複数更新が重なっても正確に処理するために絶対必要
+    -基本構文と使い方
+        const [count, setCount] = useState<number>(0);
+        setCount((prevCount) => prevCount + 1)
+    -なぜ必要か
+        -Reactは状態更新(setState)は非同期的に実行されるため
+        setCount(count + 1); // 0 + 1 = 1
+        setCount(count + 1); // 0 + 1 = 1
+        上記のように最終的にcountを2にしたいのに、count(初期値:0)に+1を繰り返してるだけで
+        カウントアップされていかない。
+        -正しい書き方
+        setCount(prev => prev + 1); // 0(prev) + 1 = 1
+        setCount(prev => prev + 1); // 1(prev) + 1 = 2
+        この書き方であれば、最新の状態をprevで参照して、正確な処理ができる
+    -実務例
+        カウンターの増加 : setCount(prev => prev + 1);
+        配列に要素を追加 : setItem(prev => [...prev, newItem]); //配列はprev => [...スプレット構文,追加要素]
+        オブジェクトを部分的に更新 : setUser(prev => ({...prev, name: "直人"})); //objは(prev => ({...prev,type: "value"}))
+        トグルの切り替え : setOpen : (prev => !prev); //!prevは反転を意味
+
+#3-1-3.プリミティブ型の状態管理
+    -プリミティブ型とは
+        -string : フォーム入力,名前,コメント
+        -number : カウント,価格,年齢
+        -boolean : チェック状態,ログイン判定,表示制御
+        これらのように単独で意味を持つ型
+    -値を直接変更できないイミュータブル
+    -useStateの型の書き方
+        const [count, setCount] = useState<number>(0)
+        const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+        const [現在値, set関数] = useState<型>(初期値)
+    -各プリミティブ型のコード例
+        -string型
+            const [inputText, setInputText] = useState<string>("");
+            const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                setInputText(e.target.value)
+            }
+        -number型
+            const [quantity, setQuantity] 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
