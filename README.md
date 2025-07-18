@@ -695,7 +695,11 @@
                 setInputText(e.target.value)
             }
         -number型
-            const [quantity, setQuantity] 
+            const [quantity, setQuantity] = useState<number>(0)
+            const increase = () => setQuantity(prev => prev + 1)
+        -boolean型
+            const [isOpen, setIsOpen] = useState<boolean>(false)
+            const toggleOpen = () => setIsOpen(prev => !prev)
 
 
 
